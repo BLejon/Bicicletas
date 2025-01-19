@@ -92,10 +92,30 @@ ggplot(data = data_dist_time)+geom_bar(mapping = aes(x=member_casual, fill = fac
 
 write.csv(data_dist_time, "Df_data_dis_time")
 
-
+#aca estamos graficando mediante cajas y bigotes la distribucion de los datos
 ggplot(data = data_dist_time, aes(x = member_casual, y=travel_time))+geom_boxplot()
 
-x <- c(data_dist_time$travel_time)
-mean(x)
-summary(x)
-  
+
+# en esta linea se eliminan los registros NA del df.
+data_dist_time <- na.omit(data_dist_time)
+
+#aca hacemos que los registros de distancia o tiempo que son ceros se eliminan porque no suman al analisis que buscamos, se verifica que la cantidad es minima pero de esta manera evitamos el sesgo en esos datos.
+data_filtrada <- data_dist_time[data_dist_time$travel_dis !=0 & data_dist_time$travel_time != 0,]
+
+
+
+#aca se verifican la cantidad de datos por encima de los valores tipicos.
+atipicos <- sum(data_filtrada$travel_time > 33,8)
+print(atipicos)
+
+#generamos un df sin incluir los datos atipicos para que sea legible el histograma.
+df_histo <- data_filtrada[data_filtrada$travel_time < 34,]
+
+
+#histograma en donde se le pone color al borde y se rellena de blanco, ademas se indica que se deben graficar 100 barras
+ggplot(data = df_histo,  aes(x = travel_time,))+
+  geom_histogram(colour= 4, fill="white", bins = 100)
+
+#aca ya tenemos un diagrama en donde se compara la curva segun si es miembro o casual para ver los tiempos de uso y compararlos.
+ggplot(data = df_histo, aes(x = travel_time, color = member_casual, fill = member_casual))+
+  geom_density(alpha = 0.7)
